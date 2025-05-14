@@ -27,7 +27,7 @@ const UseTicket = () => {
 
     try {
       const accounts = await web3.eth.getAccounts();
-
+  
       const receipt = await Tiket.methods
         .gunakanTiket(ticketCode, nik)
         .send({ from: accounts[0], gas: "3000000" });
@@ -59,7 +59,7 @@ const UseTicket = () => {
             error={!!resultMessage}
           >
             <Form.Field>
-              <label>Enter Ticket Code</label>
+              <label>Kode Tiket</label>
               <input
                 type="text"
                 value={ticketCode}
@@ -69,7 +69,7 @@ const UseTicket = () => {
             </Form.Field>
 
             <Form.Field>
-              <label>Enter Your NIK</label>
+              <label>NIK</label>
               <input
                 type="text"
                 value={nik}

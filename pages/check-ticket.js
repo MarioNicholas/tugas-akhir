@@ -31,23 +31,24 @@ const CheckTicket = () => {
     event.preventDefault();
     setLoading(true);
     setResultMessage("");
-    setValid(false); 
+    setValid(false);
     try {
       const result = await Tiket.methods.cekTiket(ticketCode, nik).call();
+
       const isValid = result[0];
       const message = result[1];
 
       setResultMessage(message);
 
       if (isValid) {
-        setValid(true); 
+        setValid(true);
       } else {
-        setValid(false); 
+        setValid(false);
       }
     } catch (error) {
       console.error(error);
       setResultMessage("Terjadi kesalahan saat memeriksa tiket.");
-      setValid(false); 
+      setValid(false);
     } finally {
       setLoading(false);
     }
@@ -63,12 +64,9 @@ const CheckTicket = () => {
         <Grid centered>
           <GridColumn width={10}>
             <Segment>
-              <Form
-                onSubmit={handleCheckTicket}
-                error={!!resultMessage}
-              >
+              <Form onSubmit={handleCheckTicket} error={!!resultMessage}>
                 <Form.Field>
-                  <label>Enter Ticket Code</label>
+                  <label>Kode Tiket</label>
                   <input
                     type="text"
                     value={ticketCode}
@@ -78,7 +76,7 @@ const CheckTicket = () => {
                 </Form.Field>
 
                 <Form.Field>
-                  <label>Enter Your NIK</label>
+                  <label>NIK</label>
                   <input
                     type="text"
                     value={nik}
@@ -93,7 +91,11 @@ const CheckTicket = () => {
                 </Button>
               </Form>
               {resultMessage && !valid && (
-                <Message error header="Hasil Cek Tiket" content={resultMessage} />
+                <Message
+                  error
+                  header="Hasil Cek Tiket"
+                  content={resultMessage}
+                />
               )}
 
               {resultMessage && valid && !loading && (

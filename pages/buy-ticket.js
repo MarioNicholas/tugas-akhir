@@ -61,7 +61,7 @@ const BuyTicket = ({ ticketData }) => {
     <Layout>
       <div style={{ marginTop: "60px" }}>
         <Header as="h1" textAlign="center">
-          Buy Tickets for Concert In Jakarta
+          Beli Tiket untuk Concert In Jakarta
         </Header>
 
         <Grid centered>
@@ -77,7 +77,7 @@ const BuyTicket = ({ ticketData }) => {
 
               <Form onSubmit={handleSubmit} error={!!errorMessage}>
                 <FormField>
-                  <label>Select Number of Tickets</label>
+                  <label>Jumlah Tiket</label>
                   <input
                     type="number"
                     value={ticketQuantity}
@@ -93,7 +93,7 @@ const BuyTicket = ({ ticketData }) => {
                 )}
 
                 <Button primary type="submit" loading={loading}>
-                  Proceed
+                  Beli
                 </Button>
                 <Message info>
                   <Message.Header>Perhatian</Message.Header>

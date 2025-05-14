@@ -29,10 +29,10 @@ const TicketCode = () => {
       <div style={{ marginTop: "60px" }}>
         <Segment>
           <Header as="h1" textAlign="center">
-            Payment Successful!
+           Pembayaran Berhasil!
           </Header>
           <p style={{ textAlign: "center" }}>
-            <strong>Your Ticket Code: </strong>
+            <strong>Kode Tiket anda: </strong>
             <code>{ticketCode}</code>
           </p>
           <Message warning content="Simpan kode tiket ini dengan baik." />
@@ -42,7 +42,7 @@ const TicketCode = () => {
           <Segment>
             <Message info>
               <p>
-                You can view the transaction on{" "}
+                Anda dapat melihat transaksi pada{" "}
                 <a
                   href={`https://sepolia.etherscan.io/tx/${transactionHash}`}
                   target="_blank"

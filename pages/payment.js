@@ -23,6 +23,8 @@ const Payment = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [jumlahTiket, setJumlahTiket] = useState(0);
+  const [hargaTiket, setHargaTiket] = useState("0");
 
   useEffect(() => {
     if (router.query.holdId) {
@@ -43,23 +45,31 @@ const Payment = () => {
     };
 
     const handleBeforeUnload = (event) => {
+      releaseHold();
       event.preventDefault();
       event.returnValue =
         "Are you sure you want to leave this page? Changes may not be saved.";
     };
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden" && router.query.holdId) {
-        releaseHold();
+    const fetchTiketData = async () => {
+      try {
+        const holdData = await Tiket.methods
+          .holdTiketData(router.query.holdId)
+          .call();
+        setJumlahTiket(holdData.jumlahTiket);
+
+        const harga = await Tiket.methods.hargaTiket().call();
+        setHargaTiket(harga);
+      } catch (err) {
+        console.error("Gagal mengambil data tiket:", err);
       }
     };
+    fetchTiketData();
 
     window.addEventListener("beforeunload", handleBeforeUnload);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [router.query.holdId]);
 
@@ -78,7 +88,7 @@ const Payment = () => {
   //       alert(
   //         "Waktu hold tiket habis. Anda akan diarahkan kembali ke halaman awal."
   //       );
-  //       router.push("/"); 
+  //       router.push("/");
   //     } catch (error) {
   //       console.error("Gagal melepaskan hold tiket:", error);
   //       alert(
@@ -86,9 +96,9 @@ const Payment = () => {
   //       );
   //       router.push("/");
   //     }
-  //   }, 5 * 60 * 1000); 
+  //   }, 5 * 60 * 1000);
 
-  //   return () => clearTimeout(timeout); 
+  //   return () => clearTimeout(timeout);
   // }, [router.query.holdId]);
 
   const handleNikChange = (event) => {
@@ -138,17 +148,28 @@ const Payment = () => {
     <Layout>
       <div style={{ marginTop: "60px" }}>
         <Header as="h1" textAlign="center">
-          Payment for Ticket(s)
+          Pembayaran
         </Header>
 
         <Grid centered>
           <GridColumn width={10}>
             <Segment>
-              <p>Your tickets are being held with Hold ID: {holdId}</p>
-
+              <p>Tiket anda telah di hold dengan ID: {holdId}</p>
+              <p>
+                Jumlah tiket: <strong>{jumlahTiket.toString()}</strong>
+              </p>
+              <p>
+                Harga per tiket: <strong>Rp.{hargaTiket.toString()}</strong>
+              </p>
+              <p>
+                Total harga:{" "}
+                <strong>
+                  Rp.{(BigInt(jumlahTiket) * BigInt(hargaTiket)).toString()}
+                </strong>
+              </p>
               <Form error={!!errorMessage}>
                 <FormField>
-                  <label>Enter Your NIK</label>
+                  <label>NIK</label>
                   <input
                     type="text"
                     value={nik}
@@ -163,7 +184,7 @@ const Payment = () => {
                 )}
 
                 <Button primary onClick={handlePayment} loading={loading}>
-                  Pay
+                  Bayar
                 </Button>
               </Form>
             </Segment>

@@ -71,9 +71,12 @@ describe("Hold Tiket Sementara", () => {
     }
   });
   it("Berhasil hold tiket", async () => {
+    console.time("Hold Tiket");
     const receipt = await tiket.methods
       .holdTiketSementara(2)
       .send({ from: accounts[0], gas: "1000000" });
+    console.timeEnd("Hold Tiket"); // ⬅️ ini akan log berapa lama waktu eksekusi `send`
+
     const holdId = receipt.events.TiketDiHold.returnValues.holdId;
     const holdData = await tiket.methods.holdTiketData(holdId).call();
 
@@ -236,8 +239,8 @@ describe("Beli Tiket", () => {
     const holdId = receipt.events.TiketDiHold.returnValues.holdId;
     // await tiket.methods.releaseHoldTiket(holdId).send({ from: accounts[0] });
     await tiket.methods
-        .beliTiket(holdId, "1234567890123456")
-        .send({ from: accounts[0], gas: "1000000" });
+      .beliTiket(holdId, "1234567890123456")
+      .send({ from: accounts[0], gas: "1000000" });
     try {
       await tiket.methods
         .beliTiket(holdId, "1234567890123459")
@@ -312,9 +315,11 @@ describe("Beli Tiket", () => {
 
     const holdId = receipt.events.TiketDiHold.returnValues.holdId;
 
+    console.time("Beli Tiket");
     await tiket.methods
       .beliTiket(holdId, "1234567890123456")
       .send({ from: accounts[0], gas: "1000000" });
+    console.timeEnd("Beli Tiket");
 
     const ticketData = await tiket.methods.holdTiketData(holdId).call();
     assert.strictEqual(ticketData.aktif, false);
@@ -351,11 +356,11 @@ describe("Gunakan Tiket", () => {
       .send({ from: accounts[0], gas: "1000000" });
 
     const kodeUnik = buyReceipt.events.TiketDibeli.returnValues.kodeUnik;
-
+    console.time("Gunakan Tiket");
     await tiket.methods
       .gunakanTiket(kodeUnik, "1234567890123456")
       .send({ from: accounts[0] });
-
+    console.timeEnd("Gunakan Tiket");
     const ticketDetail = await tiket.methods
       .daftarTiket(buyReceipt.events.TiketDibeli.returnValues.idTiket)
       .call();
@@ -460,10 +465,12 @@ describe("Cek Tiket", () => {
       .send({ from: accounts[0], gas: "1000000" });
 
     const kodeUnik = buyReceipt.events.TiketDibeli.returnValues.kodeUnik;
-
+    console.time("cek Tiket");
     const result = await tiket.methods
       .cekTiket(kodeUnik, "1234567890123456")
       .call();
+    console.timeEnd("cek Tiket");
+
     const isValid = result[0];
     const message = result[1];
 
@@ -537,11 +544,14 @@ describe("Cek Tiket", () => {
 
 //TIKET TERSEDIA
 describe("Tiket Tersedia", () => {
-  it("Mengembalikan total tiket tersedia ketika ada yang di hold", async () => {
+  it.only("Mengembalikan total tiket tersedia ketika ada yang di hold", async () => {
     const receipt = await tiket.methods
       .holdTiketSementara(1)
       .send({ from: accounts[0], gas: "1000000" });
+    console.time("Tiket Tersedia");
     const availableTickets = await tiket.methods.tiketTersedia().call();
+    console.timeEnd("Tiket Tersedia");
+
     assert.strictEqual(availableTickets.toString(), "9");
   });
 

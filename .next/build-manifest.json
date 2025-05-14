@@ -34,11 +34,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/buy-ticket.js"
-    ],
-    "/payment": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/payment.js"
     ]
   },
   "ampFirstPages": []

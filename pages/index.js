@@ -48,6 +48,9 @@ const Home = (props) => {
                 <p style={{ marginBottom: "30px" }}>
                   <strong>Tiket Tersedia:</strong> {props.availableTickets}
                 </p>
+                <p style={{ marginBottom: "30px" }}>
+                  <strong>Total Tiket:</strong> {props.totalTicket}
+                </p>
               </div>
 
               <Link href="/buy-ticket" passHref>
