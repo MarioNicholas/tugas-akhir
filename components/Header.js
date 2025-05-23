@@ -1,12 +1,13 @@
+import Link from "next/link";
 import React from "react";
 import { Menu, Container, Button, MenuItem, MenuMenu } from "semantic-ui-react";
-import { Link } from "../routes";
+
 
 const Header = () => {
   return (
     <Menu color="black" inverted>
       <Container>
-        <Link route="/">
+        <Link href="/">
           <a className="item">
             <h2>Concert</h2>
           </a>

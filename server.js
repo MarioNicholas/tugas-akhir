@@ -5,12 +5,13 @@ const app = next({
   dev: process.env.NODE_ENV !== "production",
 });
 
-const routes = require("./routes")
-const handler = routes.getRequestHandler(app);
+const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
-  createServer(handler).listen(3000, (err) => {
-    if(err) throw err;
-    console.log("Ready on localhost:3000")
-  })
-})
+  createServer((req, res) => {
+    handle(req, res);
+  }).listen(3000, (err) => {
+    if (err) throw err;
+    console.log("Ready on http://localhost:3000");
+  });
+});

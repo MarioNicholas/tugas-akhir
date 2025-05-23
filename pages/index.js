@@ -1,6 +1,5 @@
 import React from "react";
 import Layout from "../components/Layout";
-import { Link } from "../routes";
 import {
   Grid,
   GridRow,
@@ -11,6 +10,7 @@ import {
   Button,
 } from "semantic-ui-react";
 import Tiket from "../ethereum/tiket";
+import Link from "next/link";
 
 const Home = (props) => {
   return (
