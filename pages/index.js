@@ -90,6 +90,7 @@ export async function getStaticProps() {
       ticketPrice: ticketPrice.toString(),
       availableTickets: availableTickets.toString(),
     },
+    revalidate: 10,
   };
 }
 

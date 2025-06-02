@@ -130,6 +130,7 @@ export async function getStaticProps() {
         maxTiketPerIdentitas: maxTiketPerIdentitas.toString(),
       },
     },
+    revalidate: 10,
   };
 }
 
