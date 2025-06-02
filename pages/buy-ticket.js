@@ -51,7 +51,7 @@ const BuyTicket = ({ ticketData }) => {
 
       router.push(`/payment?holdId=${holdId}`);
     } catch (error) {
-      setErrorMessage(error.message);
+      setErrorMessage("Tiket tidak dapat dipesan, silahkan perhatikan aturannya");
     }
 
     setLoading(false);

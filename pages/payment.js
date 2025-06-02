@@ -138,7 +138,7 @@ const Payment = () => {
         `/ticket-code?ticketCode=${ticketCode}&transactionHash=${transactionHash}`
       );
     } catch (error) {
-      setErrorMessage(error.message);
+      setErrorMessage("Tiket tidak dapat dibeli");
       console.error(error);
     }
     setLoading(false);
