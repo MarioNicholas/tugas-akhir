@@ -7,20 +7,22 @@ import {
   Image,
   Message,
   GridColumn,
+  List,
 } from "semantic-ui-react";
 import { useRouter } from "next/router";
 
 const TicketCode = () => {
-  const [ticketCode, setTicketCode] = useState("");
-  const [transactionHash, setTransactionHash] = useState(""); // State for transactionHash
+  const [ticketCode, setTicketCode] = useState([]);
+  const [transactionHash, setTransactionHash] = useState("");
   const router = useRouter();
 
   useEffect(() => {
     if (router.query.ticketCode) {
-      setTicketCode(router.query.ticketCode);
+      const codes = router.query.ticketCode.split(",");
+      setTicketCode(codes);
     }
     if (router.query.transactionHash) {
-      setTransactionHash(router.query.transactionHash); // Capture transactionHash from URL
+      setTransactionHash(router.query.transactionHash);
     }
   }, [router.query]);
 
@@ -29,12 +31,20 @@ const TicketCode = () => {
       <div style={{ marginTop: "60px" }}>
         <Segment>
           <Header as="h1" textAlign="center">
-           Pembayaran Berhasil!
+            Pembayaran Berhasil!
           </Header>
           <p style={{ textAlign: "center" }}>
-            <strong>Kode Tiket anda: </strong>
-            <code>{ticketCode}</code>
+            <strong>Kode Tiket Anda: </strong>
           </p>
+          <List divided relaxed style={{ textAlign: "center" }}>
+            {ticketCode.map((code, index) => (
+              <List.Item key={index}>
+                <List.Content>
+                  <List.Header as="code">{code.trim()}</List.Header>
+                </List.Content>
+              </List.Item>
+            ))}
+          </List>
           <Message warning content="Simpan kode tiket ini dengan baik." />
         </Segment>
 
