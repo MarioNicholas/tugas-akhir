@@ -68,8 +68,15 @@ const Payment = () => {
 
     window.addEventListener("beforeunload", handleBeforeUnload);
 
+    const timeout = setTimeout(async () => {
+      await releaseHold();
+      alert("Waktu hold tiket habis. Anda akan diarahkan ke halaman awal.");
+      router.push("/");
+    }, 5 * 60 * 1000);
+
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
+      clearTimeout(timeout);
     };
   }, [router.query.holdId]);
 

@@ -79,7 +79,7 @@ const Home = (props) => {
   );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const totalTicket = await Tiket.methods.totalTiket().call();
   const ticketPrice = await Tiket.methods.hargaTiket().call();
   const availableTickets = await Tiket.methods.tiketTersedia().call();
@@ -90,7 +90,6 @@ export async function getStaticProps() {
       ticketPrice: ticketPrice.toString(),
       availableTickets: availableTickets.toString(),
     },
-    revalidate: 10,
   };
 }
 
