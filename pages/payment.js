@@ -126,26 +126,29 @@ const Payment = () => {
     try {
       const accounts = await web3.eth.getAccounts();
       const account = accounts[0];
-      // console.log("Trying to buy ticket with:", { holdId, nik, account });
 
       const receipt = await Tiket.methods
         .beliTiket(holdId, nik)
         .send({ from: account, gas: "9000000" });
 
-      const ticketEvents = receipt.events.TiketDibeli;
-
-      const eventArray = Array.isArray(ticketEvents) ? ticketEvents : [ticketEvents];
-      const ticketCodes = eventArray.map(event => event.returnValues.kodeUnik)
+      const events = await Tiket.getPastEvents("TiketDibeli", {
+        fromBlock: receipt.blockNumber,
+        toBlock: receipt.blockNumber,
+        filter: { nik: nik },
+      });
+      const ticketCodes = events.map((event) => event.returnValues.kodeUnik);
 
       const transactionHash = receipt.transactionHash;
       web3.currentProvider.engine.stop();
 
-      setTicketCode(ticketCodes.join(', '));
+      setTicketCode(ticketCodes.join(", "));
       setTranscationHash(transactionHash);
       setPaymentSuccess(true);
 
       router.push(
-        `/ticket-code?ticketCode=${ticketCodes.join(',')}&transactionHash=${transactionHash}`
+        `/ticket-code?ticketCode=${ticketCodes.join(
+          ","
+        )}&transactionHash=${transactionHash}`
       );
     } catch (error) {
       setErrorMessage("Tiket tidak dapat dibeli");

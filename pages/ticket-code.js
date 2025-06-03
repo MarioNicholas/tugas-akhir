@@ -36,7 +36,7 @@ const TicketCode = () => {
           <p style={{ textAlign: "center" }}>
             <strong>Kode Tiket Anda: </strong>
           </p>
-          <List divided relaxed style={{ textAlign: "center" }}>
+          <List relaxed style={{ textAlign: "center" }}>
             {ticketCode.map((code, index) => (
               <List.Item key={index}>
                 <List.Content>
