@@ -13,7 +13,7 @@ contract Tiket is ReentrancyGuard {
     uint256 public hargaTiket;
 
     struct TiketDetail {
-        string nik;
+        bytes32 nikHash;
         string kodeUnik;
         bool digunakan;
     }
@@ -26,13 +26,13 @@ contract Tiket is ReentrancyGuard {
 
     mapping(uint256 => HoldTiket) public holdTiketData;
     mapping(uint256 => string) public holdNik;
-    mapping(string => uint256) public tiketPerIdentitas;
+    mapping(bytes32 => uint256) public tiketPerIdentitas;
     mapping(string => uint256) public kodeTiketToId;
     mapping(uint256 => TiketDetail) public daftarTiket;
     mapping(string => uint256) public tiketDibeliPerNIK;
 
-    event TiketDibeli(uint256 indexed idTiket, string nik, string kodeUnik);
-    event TiketDigunakan(uint256 indexed idTiket, string nik);
+    event TiketDibeli(uint256 indexed idTiket, bytes32 indexed nikHash, string kodeUnik);
+    event TiketDigunakan(uint256 indexed idTiket, bytes32 indexed nikHash);
     event TiketDiHold(uint256 indexed holdId, uint256 jumlah);
     event TiketDilepas(uint256 indexed holdId);
 
@@ -56,11 +56,23 @@ contract Tiket is ReentrancyGuard {
         hargaTiket = _hargaTiket;
     }
 
+    function hashNIK(string memory nik) private pure returns (bytes32) {
+        return keccak256(abi.encodePacked(nik));
+    }
+
     function generateKodeUnik(
         uint256 idTiket,
         string memory nik
     ) private pure returns (string memory) {
-        return string(abi.encodePacked(nik, "-", uint2str(idTiket)));
+        bytes32 nikHash = hashNIK(nik);
+        return
+            string(
+                abi.encodePacked(
+                    uint2str(uint256(nikHash)),
+                    "-",
+                    uint2str(idTiket)
+                )
+            );
     }
 
     function uint2str(uint256 _i) private pure returns (string memory) {
@@ -115,7 +127,7 @@ contract Tiket is ReentrancyGuard {
         return holdId;
     }
 
-    function releaseHoldTiket(uint256 holdId) public hanyaPemilik nonReentrant() {
+    function releaseHoldTiket(uint256 holdId) public hanyaPemilik nonReentrant {
         require(
             holdTiketData[holdId].aktif,
             "Hold ID tidak valid atau sudah dilepas"
@@ -135,32 +147,29 @@ contract Tiket is ReentrancyGuard {
             holdTiketData[holdId].aktif,
             "Hold ID tidak valid atau sudah dilepas"
         );
-        // require(
-        //     block.timestamp <= holdTiketData[holdId].holdTimestamp,
-        //     "Waktu hold tiket sudah habis"
-        // );
+
+        bytes32 nikHash = hashNIK(nik);
         require(
-            tiketPerIdentitas[nik] == 0,
+            tiketPerIdentitas[nikHash] == 0,
             "Identitas ini sudah membeli tiket"
         );
 
         if (block.timestamp > holdTiketData[holdId].holdTimestamp) {
-            // Auto-release expired hold
             holdTiketData[holdId].aktif = false;
             emit TiketDilepas(holdId);
             revert("Waktu hold tiket sudah habis dan tiket telah dilepas.");
         }
 
         uint256 jumlahTiket = holdTiketData[holdId].jumlahTiket;
-        tiketPerIdentitas[nik] = jumlahTiket;
+        tiketPerIdentitas[nikHash] = jumlahTiket;
 
         for (uint256 i = 0; i < jumlahTiket; i++) {
             uint256 idTiket = tiketTerjual + 1;
             string memory kodeUnik = generateKodeUnik(idTiket, nik);
-            daftarTiket[idTiket] = TiketDetail(nik, kodeUnik, false);
+            daftarTiket[idTiket] = TiketDetail(nikHash, kodeUnik, false);
             kodeTiketToId[kodeUnik] = idTiket;
             tiketTerjual++;
-            emit TiketDibeli(idTiket, nik, kodeUnik);
+            emit TiketDibeli(idTiket, nikHash, kodeUnik);
         }
 
         holdTiketData[holdId].aktif = false;
@@ -173,14 +182,15 @@ contract Tiket is ReentrancyGuard {
         uint256 idTiket = kodeTiketToId[kodeTiket];
         require(idTiket != 0, "Tiket tidak ditemukan");
         require(!daftarTiket[idTiket].digunakan, "Tiket sudah digunakan");
+
+        bytes32 nikHash = hashNIK(nik);
         require(
-            keccak256(abi.encodePacked(daftarTiket[idTiket].nik)) ==
-                keccak256(abi.encodePacked(nik)),
+            daftarTiket[idTiket].nikHash == nikHash,
             "Identitas tidak sesuai"
         );
 
         daftarTiket[idTiket].digunakan = true;
-        emit TiketDigunakan(idTiket, nik);
+        emit TiketDigunakan(idTiket, nikHash);
     }
 
     function cekTiket(
@@ -191,10 +201,9 @@ contract Tiket is ReentrancyGuard {
         if (idTiket == 0) {
             return (false, "Tiket tidak ditemukan");
         }
-        if (
-            keccak256(abi.encodePacked(daftarTiket[idTiket].nik)) ==
-            keccak256(abi.encodePacked(nik))
-        ) {
+
+        bytes32 nikHash = hashNIK(nik);
+        if (daftarTiket[idTiket].nikHash == nikHash) {
             if (!daftarTiket[idTiket].digunakan) {
                 return (true, "Tiket valid dan belum digunakan");
             } else {

@@ -131,10 +131,12 @@ const Payment = () => {
         .beliTiket(holdId, nik)
         .send({ from: account, gas: "9000000" });
 
+      const nikHash = web3.utils.keccak256(nik);
+
       const events = await Tiket.getPastEvents("TiketDibeli", {
         fromBlock: receipt.blockNumber,
         toBlock: receipt.blockNumber,
-        filter: { nik: nik },
+        filter: { nikHash: nikHash },
       });
       const ticketCodes = events.map((event) => event.returnValues.kodeUnik);
 
