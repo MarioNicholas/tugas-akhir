@@ -1,0 +1,28 @@
+{
+  "name": "sistem",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "node server.js",
+    "vercel-build": "npm install --legacy-peer-deps && next build"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.6",
+    "@truffle/hdwallet-provider": "^2.1.15",
+    "dotenv": "^16.5.0",
+    "fs-extra": "^11.3.0",
+    "ganache": "^7.9.2",
+    "mocha": "^11.1.0",
+    "next": "^12.3.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "semantic-ui-css": "^2.5.0",
+    "semantic-ui-react": "^2.1.5",
+    "solc": "^0.8.9",
+    "web3": "^4.16.0"
+  }
+}
